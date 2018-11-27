@@ -2,6 +2,7 @@ package com.app.talk;
 
 import com.app.talk.command.set.ExitCommand;
 import com.app.talk.command.set.MessageCommand;
+import com.app.talk.common.User;
 
 
 import java.io.IOException;
@@ -36,14 +37,19 @@ public class Sender implements Runnable {
      * The communicators socket.
      */
     private Socket socket;
+    /**
+     * User Object containing username.
+     */
+    private User user;
 
     /**
      * A sender of information over the network.
      *
      * @param socket
      */
-    public Sender(Socket socket) throws IOException {
+    public Sender(Socket socket, User user) throws IOException {
         this.socket = socket;
+        this.user = user;
     }
 
     /**
@@ -58,7 +64,7 @@ public class Sender implements Runnable {
             System.out.println("Connection established to remote " + this.socket.getInetAddress() + ":" + this.socket.getPort() + " from local address " + this.socket.getLocalAddress() + ":" + this.socket.getLocalPort());
 
             this.setOutputStream();
-            
+
             this.sendUserInput();
 
             this.closeConnection();
@@ -144,7 +150,7 @@ public class Sender implements Runnable {
      * @param message - message that should be sent to the other host.
      */
     private void sendMessage(String message) throws IOException {
-        MessageCommand messageCommand = new MessageCommand("[" + TalkClient.user.getName() + "]: " + message);
+        MessageCommand messageCommand = new MessageCommand("[" + this.user.getName() + "]: " + message);
         send(messageCommand);
     }
 

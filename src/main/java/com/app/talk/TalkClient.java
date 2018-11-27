@@ -20,24 +20,22 @@ public class TalkClient {
     /**
      * User Object containing username.
      */
-    static User user = null;
+    private User user = null;
+
     /**
      * Client constructor.
      *
      * @param config client configuration
      * @throws IOException
      */
-    private TalkClient(Config config) throws IOException {
-    	TalkClient.user = new User();
-        user.setNameFromUserInput();
+    private TalkClient(Config config, User user) throws IOException {
+        this.user = user;
         this.socket = new Socket(config.getRemoteHost(), config.getPort());
-        
-        
     }
 
     private void run() throws IOException {
-        System.out.println("Trying to connect to remote " + socket.getInetAddress() + ":" + socket.getPort());        
-        CommunicatorFactory.getInstance().createCommunicator(socket);
+        System.out.println("Trying to connect to remote " + socket.getInetAddress() + ":" + socket.getPort());
+        CommunicatorFactory.getInstance().createCommunicator(socket, user);
     }
 
     /**
@@ -50,9 +48,11 @@ public class TalkClient {
     public static void main(String[] args) throws ConfigParserException, IOException {
         ConfigParser configParser = new ConfigParser(args);
         Config config = configParser.getConfig();
-        
-        
-        TalkClient client = new TalkClient(config);
+
+        User user = new User();
+        user.setNameFromUserInput();
+
+        TalkClient client = new TalkClient(config, user);
         client.run();
     }
 }
